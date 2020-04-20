@@ -1,0 +1,235 @@
+mandatory: True
+code: |
+  part_one
+  user_name_first
+  organization_type
+  pres_name_first
+  board_name_first
+  contact_name_first
+  sign_name_first
+  board_vote
+  part_two
+  serp_people.gather()
+  part_three
+  policy_assign
+  part_four
+  special_type
+  part_five
+  contact_name
+  display_results
+---
+metadata:
+  title: |
+    Client Intake Form
+  short title: |
+    Client Intake
+  authors:
+    - name: Briana McCarthy
+  documentation: "https://docassemble.org/docs/initial.html#metadata"
+  logo: |
+    <img src="/packagestatic/docassemble.finalproject/(SL_Logo.tiff)" style="max-height:1.9em;"/> <h3>Client Intake Form</h3>
+---
+features:
+  question help button: True
+  # https://www.bootstrapcdn.com/bootswatch
+  bootstrap theme: https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/cosmo/bootstrap.min.css
+---
+question: |
+  Part One: Employer Information
+field: part_one
+---
+question: |
+  Employer Information
+fields:
+  - First name: user_name_first
+  - Last name: user_name_last
+  - Street address: user_address_address
+    address autocomplete: True
+  - Unit: user_address_unit
+    required: False
+  - City: user_address_city
+  - State: user_address_state
+  - Zip: user_address_zip
+---
+question: |
+  What type of organization is your company?
+fields:
+  - "Select the type of organization": organization_type
+    datatype: checkboxes
+    choices:
+      - Non Profit
+      - For Profit
+---
+question: |
+  Direct Contact Information for President/CEO:
+fields:
+  - First Name: pres_name_first
+  - Last name: pres_name_last
+  - E-mail: pres_email_address
+---
+question: |
+  Direct Contact Information for Board Chair:
+fields:
+  - First name: board_name_first
+  - Last name: board_name_last
+  - E-mail: board_email_address
+---
+question: |
+  Contact person at Employer who will work with Sherin and Lodgen LLP on this engagement
+subquestion: |
+  (Should not be executive receiving the CASD SERP, or officer subordinate to SERP recipient):  
+fields:
+  - First name: contact_name_first
+  - Last name: contact_name_last
+  - E-mail: contact_email_address
+---
+question: |
+  Person who will sign documents on behalf of the Employer (name/title)
+subquestion: |
+  (NOTE: Cannot be executive receiving SERP or subordinate of SERP recipient): 
+fields:
+  - First name: sign_name_first
+  - Last name: sign_name_last
+  - E-mail: sign_email_address
+--- 
+question: |
+  Has the Board of Directors voted on any aspects of the proposed SERP arrangement?
+yesno: board_vote
+---
+question: |
+  Part Two: Personal Information For Person(s) To Be Covered By Program:
+field: part_two
+---
+objects: 
+  - serp_people: DAList.using(object_type=Individual,there_are_any=True,complete_attribute='serp_complete')
+---
+code: |
+  serp_people[i].name.first
+  serp_people[i].employment_contract
+  serp_people[i].board_directors
+  serp_people[i].employer_board
+  serp_people[i].attorney_name_first
+  serp_people[i].serp_complete=True
+---
+question: |
+  Please complete one copy for each person receiving a SERP: 
+list collect: True
+fields:
+  - Full Name: serp_people[i].name.first
+  - Title: serp_people[i].title
+  - Home Address: serp_people[i].fulladdress
+  - Phone: serp_people[i].phone_number
+  - Email: serp_people[i].email
+  - Name of Insured, if different: serp_people[i].insured_name
+    required: false
+  - Relationship: serp_people[i].relationship
+    required: false
+---
+question: |
+  Does ${serp_people[i]} have any of the following agreement/arrangements with the Employer: 
+subquestion: |
+  (Note: copies of agreement below needed only to insure that new SERP agreement does not conflict.
+fields:
+  - "Employment/Other Services Contract?": serp_people[i].employment_contract
+    datatype: yesnoradio
+  - "Non-Competition/Non-Solicitation Contract?": serp_people[i].noncompete_contract
+    datatype: yesnoradio
+  - "Deferred Comp Plan?": serp_people[i].deferred_contract
+    datatype: yesnoradio 
+  - "Is there a plan, in connection with the new SERP arrangement, to enter into any new employment/personal services, non-competition/non-solicitation and/or other deferred compensation agreement/plan?": serp_people[i].new_employment_contract
+    datatype: yesnoradio
+  - "Any deferred compensation plan being terminated in connection with this new SERP?": serp_people[i].comp_plan
+    datatype: yesnoradio
+---
+question: |
+  Is ${serp_people[i]} a member of the Employer's Board of Directors?
+yesno: serp_people[i].board_directors
+---
+question: | 
+  Is spouse/relative a member of the Employer Board?
+yesno: serp_people[i].employer_board
+---
+question: |
+ Will ${serp_people[i]}’s personal attorney represent them in connection with the new SERP arrangement? 
+subquestion: |
+  If so, please provide contact information for him/her (we encourage consultation with a personal attorney in this matter, as Sherin and Lodgen LLP will be representing the Employer and not the employee personally in connection with the SERP):
+fields:
+  - Attorney Name: serp_people[i].attorney_name_first
+  - Address: serp_people[i].attorney_address
+  - Office Phone: serp_people[i].attorney_phone
+  - Office Fax Phone: serp_people[i].attorney_fax
+  - Email: serp_people[i].attorney_email
+---
+question: |
+  Part Three: Information About The Specific Insurance Policy Included in this Program:
+field: part_three
+---
+question: |
+  Information About The Specific Insurance Policy Included in this Program:
+fields:
+  - Date Original Policy Assignment was signed: policy_assign
+  - Issuing Insurance Company: insurance_company
+  - Policy Number: policy_number
+  - Policy Date: policy_date
+  - Policy Initial Face Amount: policy_amount
+  - Initial Premium: initial_premium
+  - Schedule of Annual Premiums to be paid by Employer, by year and amount (if OTHER than 10 annual payments): annual_premium
+---
+question: |
+  Part Four: Information About Pre-Funding of the Life Insurance Premiums Included in this Program:
+field: part_four
+---
+question: |
+  Special Pre-Funding Arrangements – Will the SERP life insurance policy premiums be pre-funded in any way? 
+subquestion: |
+  If so, depending on the details of those arrangements, additional documents and related fees may apply.
+fields:
+  - "Check those boxes below that apply:": special_type
+    datatype: checkboxes
+    choices:
+      - Policy Premiums will be pre-funded by an annuity or other investment owned by the Employer.   In this case, no special legal work is required in documenting the SERP. 
+      - Policy Premiums will be pre-funded by a lump sum deposit of cash advanced by the Employer into a separate account owned with a third party (including the insurer).  In this case, special legal work may be required to ensure that the Employer has a properly documented lien or other possessory interest on the separate pre-funding cash account.  Sherin and Lodgen LLP will charge an additional flat fee of $1,000 to document such a cash pre-funded SERP, unless the Employer/other Employer attorney documents those collateral arrangements itself.
+      - There are other arrangements, not described above, to pre-fund the SERP(s).  Sherin and Lodgen LLP will consult with the Employer to determine if it will be expected to provide services related to such special arrangements, and charge a separate fee for those special services based on the time required to do that special work.
+---
+question: |
+  Part Five: Contact Information (Person preparing this information):
+field: part_five
+---
+question: |
+  Contact Information (person preparing this information):
+fields:
+  - Full name: contact_name
+  - Office Address: contact_address
+  - Office Phone: contact_phone
+  - Cell Phone: contact_cell
+  - Fax Number: contact_fax
+  - Email: contact_email
+---
+---
+question: |
+  Assembling a document from a .docx
+  template
+subquestion: |
+  
+  This interview will fill fields in
+  a .docx template.  You can
+  [download the template] to see what
+  it looks like.
+
+  The letter will be sent by the
+  user to an adverse party to
+  complain about something.
+
+  [download the template]: ${ url_of('letter_template.docx') }
+field: introduction_shown
+---
+event: display_results
+question: |
+  Results
+subquestion: |
+  ${results}
+attachments:
+  - Name: Your results
+    content: |
+      ${results}
+
